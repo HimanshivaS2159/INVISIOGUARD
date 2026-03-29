@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INVISIGUARD - Invisible Fraud Detector</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0f172a 100%);
+            min-height: 100vh;
+            color: #ffffff;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(34, 197, 94, 0.05) 0%, transparent 50%);
+            animation: backgroundPulse 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes backgroundPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Main Container */
+        .main-container {
+            display: flex;
+            height: 100vh;
+            position: relative;
+            z-index: 1;
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        /* Left Panel - Input Section */
+        .left-panel {
+            flex: 1;
+            max-width: 450px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .input-card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            animation: slideInLeft 0.8s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .brand-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .brand-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6, #22c55e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 40px rgba(59, 130, 246, 0.3);
+            letter-spacing: -0.5px;
+        }
+
+        .brand-subtitle {
+            font-size: 1rem;
+            color: #94a3b8;
+            font-weight: 400;
+            opacity: 0.9;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .amount-input {
+            width: 100%;
+            padding: 1.25rem;
+            background: rgba(15, 23, 42, 0.6);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 1.2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .amount-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: rgba(15, 23, 42, 0.8);
+            box-shadow: 
+                0 0 0 4px rgba(59, 130, 246, 0.1),
+                0 0 20px rgba(59, 130, 246, 0.15);
+        }
+
+        .amount-input::placeholder {
+            color: #64748b;
+        }
+
+        /* Toggle Switches */
+        .toggles-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .toggle-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-item:hover {
+            background: rgba(15, 23, 42, 0.6);
+            border-color: rgba(59, 130, 246, 0.3);
+            transform: translateX(5px);
+        }
+
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 500;
+            color: #e2e8f0;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 32px;
+            background: rgba(71, 85, 105, 0.4);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 28px;
+            height: 28px;
+            background: #64748b;
+            border-radius: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            transform: translateX(28px);
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-secondary {
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(239, 68, 68, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+        }
+
+        /* Right Panel - Output Dashboard */
+        .right-panel {
+            flex: 1.5;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .dashboard-card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            animation: slideInRight 0.8s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Risk Meter */
+        .risk-meter-container {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .risk-meter {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 1.5rem;
+            position: relative;
+        }
+
+        .risk-circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(
+                from 0deg,
+                #22c55e 0deg,
+                #f59e0b 120deg,
+                #ef4444 240deg,
+                #22c55e 360deg
+            );
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 
+                0 0 50px rgba(34, 197, 94, 0.2),
+                inset 0 0 50px rgba(15, 23, 42, 0.8);
+        }
+
+        .risk-circle::before {
+            content: '';
+            position: absolute;
+            width: 160px;
+            height: 160px;
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 50%;
+        }
+
+        .risk-score {
+            position: relative;
+            font-size: 3rem;
+            font-weight: 900;
+            z-index: 1;
+            text-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .risk-label {
+            font-size: 1rem;
+            color: #94a3b8;
+            margin-top: 0.5rem;
+        }
+
+        /* Result Badge */
+        .result-badge {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .result-badge-inner {
+            display: inline-block;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .result-safe {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            box-shadow: 
+                0 0 30px rgba(34, 197, 94, 0.5),
+                0 0 60px rgba(34, 197, 94, 0.3);
+            animation: pulseGreen 2s infinite;
+        }
+
+        .result-fraud {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            box-shadow: 
+                0 0 30px rgba(239, 68, 68, 0.5),
+                0 0 60px rgba(239, 68, 68, 0.3);
+            animation: pulseRed 1.5s infinite;
+        }
+
+        @keyframes pulseGreen {
+            0%, 100% { 
+                box-shadow: 0 0 30px rgba(34, 197, 94, 0.5), 0 0 60px rgba(34, 197, 94, 0.3);
+            }
+            50% { 
+                box-shadow: 0 0 40px rgba(34, 197, 94, 0.7), 0 0 80px rgba(34, 197, 94, 0.4);
+            }
+        }
+
+        @keyframes pulseRed {
+            0%, 100% { 
+                box-shadow: 0 0 30px rgba(239, 68, 68, 0.5), 0 0 60px rgba(239, 68, 68, 0.3);
+            }
+            50% { 
+                box-shadow: 0 0 40px rgba(239, 68, 68, 0.8), 0 0 80px rgba(239, 68, 68, 0.5);
+            }
+        }
+
+        /* Explainability Panel */
+        .explanation-panel {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .explanation-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #e2e8f0;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .reason-list {
+            list-style: none;
+        }
+
+        .reason-item {
+            padding: 0.75rem 0;
+            color: #cbd5f5;
+            position: relative;
+            padding-left: 2rem;
+            line-height: 1.6;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .reason-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            width: 1.5rem;
+            height: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* AI Confidence */
+        .confidence-meter {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .confidence-label {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+        }
+
+        .confidence-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* History Panel */
+        .history-panel {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .history-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #e2e8f0;
+            font-size: 1rem;
+        }
+
+        .history-list {
+            list-style: none;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-info {
+            flex: 1;
+        }
+
+        .history-amount {
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 0.25rem;
+        }
+
+        .history-time {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .history-result {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .history-result.safe {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+
+        .history-result.fraud {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        /* Loading Animation */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-content {
+            text-align: center;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(59, 130, 246, 0.2);
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+
+        .loading-text {
+            font-size: 1.2rem;
+            color: white;
+            font-weight: 500;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 1001;
+            animation: slideIn 0.3s ease-out;
+            max-width: 400px;
+        }
+
+        .toast.success {
+            border-left: 4px solid #22c55e;
+        }
+
+        .toast.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-container {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .left-panel, .right-panel {
+                max-width: 100%;
+            }
+
+            .risk-meter {
+                width: 150px;
+                height: 150px;
+            }
+
+            .risk-circle::before {
+                width: 120px;
+                height: 120px;
+            }
+
+            .risk-score {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 0.5rem;
+            }
+
+            .input-card, .dashboard-card {
+                padding: 1.5rem;
+            }
+
+            .brand-title {
+                font-size: 2rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .risk-meter {
+                width: 120px;
+                height: 120px;
+            }
+
+            .risk-circle::before {
+                width: 100px;
+                height: 100px;
+            }
+
+            .risk-score {
+                font-size: 2rem;
+            }
+        }
+
+        /* Hidden by default */
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Analyzing with AI...</div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Left Panel - Input Section -->
+        <div class="left-panel">
+            <div class="input-card">
+                <!-- Brand Header -->
+                <div class="brand-header">
+                    <h1 class="brand-title">INVISIGUARD</h1>
+                    <p class="brand-subtitle">AI Fraud Detector</p>
+                </div>
+
+                <!-- Input Form -->
+                <form id="fraudForm">
+                    <div class="form-group">
+                        <label class="form-label">Transaction Amount ($)</label>
+                        <input 
+                            type="number" 
+                            id="amount" 
+                            class="amount-input" 
+                            placeholder="Enter amount" 
+                            min="0" 
+                            step="0.01"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Risk Factors</label>
+                        <div class="toggles-container">
+                            <div class="toggle-item">
+                                <div class="toggle-label">
+                                    <span>🌙</span>
+                                    <span>Night Transaction</span>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="night">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="toggle-item">
+                                <div class="toggle-label">
+                                    <span>📍</span>
+                                    <span>New Location</span>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="location">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="toggle-item">
+                                <div class="toggle-label">
+                                    <span>📱</span>
+                                    <span>New Device</span>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="device">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary">
+                            Analyze Transaction
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="simulateFraud">
+                            Simulate Fraud 🚨
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right Panel - Output Dashboard -->
+        <div class="right-panel">
+            <div class="dashboard-card">
+                <!-- Risk Meter -->
+                <div class="risk-meter-container">
+                    <div class="risk-meter">
+                        <div class="risk-circle">
+                            <div class="risk-score" id="riskScore">0</div>
+                        </div>
+                    </div>
+                    <div class="risk-label">Risk Score (0-100)</div>
+                </div>
+
+                <!-- Result Badge -->
+                <div class="result-badge">
+                    <div class="result-badge-inner hidden" id="resultBadge">
+                        <!-- Result will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- AI Confidence -->
+                <div class="confidence-meter">
+                    <div class="confidence-label">AI Confidence Level</div>
+                    <div class="confidence-value" id="confidenceLevel">0%</div>
+                </div>
+
+                <!-- Explainability Panel -->
+                <div class="explanation-panel hidden" id="explanationPanel">
+                    <div class="explanation-title">
+                        <span>🔍</span>
+                        <span>Risk Analysis</span>
+                    </div>
+                    <ul class="reason-list" id="reasonList">
+                        <!-- Reasons will be inserted here -->
+                    </ul>
+                </div>
+
+                <!-- History Panel -->
+                <div class="history-panel">
+                    <div class="history-title">📜 Recent Transactions</div>
+                    <ul class="history-list" id="historyList">
+                        <li class="history-item">
+                            <div class="history-info">
+                                <div class="history-amount">$0.00</div>
+                                <div class="history-time">No transactions yet</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Application State
+        let transactionHistory = [];
+        let isAnalyzing = false;
+
+        // DOM Elements
+        const elements = {
+            form: document.getElementById('fraudForm'),
+            amount: document.getElementById('amount'),
+            night: document.getElementById('night'),
+            location: document.getElementById('location'),
+            device: document.getElementById('device'),
+            simulateBtn: document.getElementById('simulateFraud'),
+            loadingOverlay: document.getElementById('loadingOverlay'),
+            riskScore: document.getElementById('riskScore'),
+            resultBadge: document.getElementById('resultBadge'),
+            confidenceLevel: document.getElementById('confidenceLevel'),
+            explanationPanel: document.getElementById('explanationPanel'),
+            reasonList: document.getElementById('reasonList'),
+            historyList: document.getElementById('historyList')
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            updateRiskMeter(0);
+        });
+
+        // Setup Event Listeners
+        function setupEventListeners() {
+            elements.form.addEventListener('submit', handleFormSubmit);
+            elements.simulateBtn.addEventListener('click', simulateFraud);
+            
+            // Add real-time risk meter updates
+            elements.amount.addEventListener('input', updateRiskMeterPreview);
+            [elements.night, elements.location, elements.device].forEach(toggle => {
+                toggle.addEventListener('change', updateRiskMeterPreview);
+            });
+        }
+
+        // Handle Form Submission
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+            
+            if (isAnalyzing) return;
+            
+            const amount = parseFloat(elements.amount.value);
+            if (!amount || amount <= 0) {
+                showToast('Please enter a valid amount', 'error');
+                return;
+            }
+
+            const formData = {
+                amount: amount,
+                is_night: elements.night.checked ? 1 : 0,
+                new_location: elements.location.checked ? 1 : 0,
+                new_device: elements.device.checked ? 1 : 0
+            };
+
+            await analyzeTransaction(formData);
+        }
+
+        // Analyze Transaction
+        async function analyzeTransaction(data) {
+            isAnalyzing = true;
+            showLoading(true);
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/v1/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                displayResults(result);
+                addToHistory(data, result);
+                showToast('Analysis complete!', 'success');
+
+            } catch (error) {
+                console.error('Analysis error:', error);
+                showToast('Failed to connect to AI service', 'error');
+            } finally {
+                isAnalyzing = false;
+                showLoading(false);
+            }
+        }
+
+        // Display Results
+        function displayResults(result) {
+            const riskScore = result.risk_score || 0;
+            const isFraud = result.result === 'FRAUD';
+            const confidence = Math.round((1 - Math.abs(50 - riskScore) / 50) * 100);
+
+            // Update Risk Meter with animation
+            animateRiskScore(riskScore);
+
+            // Update Result Badge
+            updateResultBadge(isFraud);
+
+            // Update Confidence
+            elements.confidenceLevel.textContent = `${confidence}%`;
+
+            // Update Explanations
+            updateExplanations(result.reasons || []);
+        }
+
+        // Animate Risk Score
+        function animateRiskScore(targetScore) {
+            const currentScore = parseInt(elements.riskScore.textContent);
+            const increment = (targetScore - currentScore) / 30;
+            let score = currentScore;
+            let frame = 0;
+
+            const animation = setInterval(() => {
+                score += increment;
+                frame++;
+                
+                elements.riskScore.textContent = Math.round(score);
+                
+                if (frame >= 30) {
+                    clearInterval(animation);
+                    elements.riskScore.textContent = targetScore;
+                }
+            }, 30);
+        }
+
+        // Update Result Badge
+        function updateResultBadge(isFraud) {
+            elements.resultBadge.classList.remove('hidden');
+            elements.resultBadge.className = `result-badge-inner ${isFraud ? 'result-fraud' : 'result-safe'}`;
+            elements.resultBadge.textContent = isFraud ? '🚨 FRAUD' : '✅ SAFE';
+        }
+
+        // Update Explanations
+        function updateExplanations(reasons) {
+            elements.explanationPanel.classList.remove('hidden');
+            elements.reasonList.innerHTML = '';
+
+            reasons.forEach(reason => {
+                const li = document.createElement('li');
+                li.className = 'reason-item';
+                li.innerHTML = `<span>${getReasonIcon(reason)}</span><span>${reason}</span>`;
+                elements.reasonList.appendChild(li);
+            });
+        }
+
+        // Get Reason Icon
+        function getReasonIcon(reason) {
+            if (reason.toLowerCase().includes('night')) return '🌙';
+            if (reason.toLowerCase().includes('location')) return '📍';
+            if (reason.toLowerCase().includes('device')) return '📱';
+            if (reason.toLowerCase().includes('amount')) return '💰';
+            return '⚠️';
+        }
+
+        // Update Risk Meter Preview
+        function updateRiskMeterPreview() {
+            const amount = parseFloat(elements.amount.value) || 0;
+            const nightBonus = elements.night.checked ? 15 : 0;
+            const locationBonus = elements.location.checked ? 20 : 0;
+            const deviceBonus = elements.device.checked ? 20 : 0;
+            
+            let riskScore = 0;
+            
+            // Amount-based risk
+            if (amount > 5000) riskScore += 25;
+            else if (amount > 2000) riskScore += 15;
+            else if (amount > 1000) riskScore += 10;
+            else if (amount > 500) riskScore += 5;
+            
+            riskScore += nightBonus + locationBonus + deviceBonus;
+            riskScore = Math.min(riskScore, 100);
+            
+            if (!isAnalyzing) {
+                elements.riskScore.textContent = riskScore;
+            }
+        }
+
+        // Update Risk Meter
+        function updateRiskMeter(score) {
+            elements.riskScore.textContent = score;
+        }
+
+        // Simulate Fraud
+        function simulateFraud() {
+            elements.amount.value = '7500';
+            elements.night.checked = true;
+            elements.location.checked = true;
+            elements.device.checked = true;
+            
+            updateRiskMeterPreview();
+            showToast('High-risk scenario loaded', 'success');
+        }
+
+        // Add to History
+        function addToHistory(formData, result) {
+            const transaction = {
+                amount: formData.amount,
+                result: result.result,
+                time: new Date().toLocaleTimeString()
+            };
+            
+            transactionHistory.unshift(transaction);
+            if (transactionHistory.length > 3) {
+                transactionHistory = transactionHistory.slice(0, 3);
+            }
+            
+            updateHistoryDisplay();
+        }
+
+        // Update History Display
+        function updateHistoryDisplay() {
+            elements.historyList.innerHTML = '';
+            
+            if (transactionHistory.length === 0) {
+                elements.historyList.innerHTML = `
+                    <li class="history-item">
+                        <div class="history-info">
+                            <div class="history-amount">$0.00</div>
+                            <div class="history-time">No transactions yet</div>
+                        </div>
+                    </li>
+                `;
+                return;
+            }
+            
+            transactionHistory.forEach(transaction => {
+                const li = document.createElement('li');
+                li.className = 'history-item';
+                li.innerHTML = `
+                    <div class="history-info">
+                        <div class="history-amount">$${transaction.amount.toFixed(2)}</div>
+                        <div class="history-time">${transaction.time}</div>
+                    </div>
+                    <div class="history-result ${transaction.result.toLowerCase()}">${transaction.result}</div>
+                `;
+                elements.historyList.appendChild(li);
+            });
+        }
+
+        // Show Loading
+        function showLoading(show) {
+            if (show) {
+                elements.loadingOverlay.classList.add('active');
+            } else {
+                elements.loadingOverlay.classList.remove('active');
+            }
+        }
+
+        // Show Toast
+        function showToast(message, type = 'success') {
+            const existingToast = document.querySelector('.toast');
+            if (existingToast) {
+                existingToast.remove();
+            }
+
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.3s ease-out reverse';
+                setTimeout(() => {
+                    if (document.body.contains(toast)) {
+                        document.body.removeChild(toast);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Keyboard Shortcuts
+        document.addEventListener('keydown', function(event) {
+            if (event.ctrlKey && event.key === 'Enter') {
+                event.preventDefault();
+                elements.form.dispatchEvent(new Event('submit'));
+            }
+        });
+    </script>
+</body>
+</html>
