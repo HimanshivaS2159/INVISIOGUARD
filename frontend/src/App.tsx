@@ -40,7 +40,7 @@ export default function App() {
       <ShaderBackground />
 
       {/* Main content */}
-      <div className="relative z-10 min-h-screen">
+      <div className="relative z-10 min-h-screen w-full">
         <AnimatedRoutes />
       </div>
 

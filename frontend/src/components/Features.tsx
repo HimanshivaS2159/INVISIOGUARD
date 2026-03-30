@@ -119,10 +119,11 @@ const cardVariants = {
 
 export default function Features() {
   return (
-    <section className="py-28 px-6 max-w-7xl mx-auto relative z-10">
+    <section className="w-full py-28 px-4">
+      <div className="max-w-7xl mx-auto">
       {/* Section header */}
       <motion.div
-        className="text-center mb-16"
+        className="w-full text-center mb-16"
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -134,7 +135,10 @@ export default function Features() {
         </div>
         <h2 className="text-4xl md:text-5xl font-black text-white mb-4 leading-tight">
           Powered by{' '}
-          <span className="bg-gradient-to-r from-[#A855F7] to-[#6366F1] bg-clip-text text-transparent">
+          <span style={{
+            background: 'linear-gradient(135deg,#A855F7,#6366F1)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+          }}>
             Intelligence
           </span>
         </h2>
@@ -162,17 +166,14 @@ export default function Features() {
                 shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.07)]"
               whileHover={{
                 borderColor: `${card.accent}40`,
-                boxShadow: `0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px ${card.accent}25, inset 0 1px 0 rgba(255,255,255,0.1)`,
+                boxShadow: `0 16px 48px rgba(0,0,0,0.5),0 0 0 1px ${card.accent}25,inset 0 1px 0 rgba(255,255,255,0.1)`,
                 y: -4,
               }}
               transition={{ type: 'spring', stiffness: 300, damping: 25 }}
             >
-              {/* Top highlight */}
               <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[rgba(255,255,255,0.12)] to-transparent" />
-              {/* Subtle glow corner */}
               <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-10"
-                style={{ background: `radial-gradient(circle, ${card.accent}, transparent)` }} />
-
+                style={{ background: `radial-gradient(circle,${card.accent},transparent)` }} />
               <div className="mb-3">{card.icon}</div>
               <h3 className="text-base font-bold text-white mb-2 leading-snug">{card.title}</h3>
               <p className="text-sm text-[#9B8EC4] leading-relaxed">{card.description}</p>
@@ -180,6 +181,7 @@ export default function Features() {
             </motion.div>
           </motion.div>
         ))}
+      </div>
       </div>
     </section>
   );
