@@ -19,7 +19,13 @@ const mockProfile: UserProfileType = {
   total_transactions: 47,
   avg_risk_score: 24.3,
   risk_level: 'LOW',
-  transactions: [
+  average_transaction_amount: 5200,
+  unique_locations: 3,
+  unique_devices: 2,
+  transactions_last_24h: 4,
+  frequency_score: 40,
+  last_transaction: new Date().toISOString(),
+  recent_transactions: [
     { amount: 2500, risk_score: 12, result: 'SAFE', timestamp: new Date().toISOString(), reasons: ['No risk factors'] },
     { amount: 45000, risk_score: 78, result: 'FRAUD', timestamp: new Date().toISOString(), reasons: ['High amount', 'Night transaction'] },
     { amount: 800, risk_score: 8, result: 'SAFE', timestamp: new Date().toISOString(), reasons: ['No risk factors'] },
@@ -157,7 +163,7 @@ export default function UserProfilePage() {
               Behavioral Patterns
             </h3>
             <div className="flex flex-wrap gap-2">
-              {profile.behavioral_patterns.map((pattern, i) => (
+              {(profile.behavioral_patterns ?? []).map((pattern, i) => (
                 <motion.span
                   key={i}
                   className="px-3 py-1.5 text-xs rounded-full
@@ -181,7 +187,7 @@ export default function UserProfilePage() {
               Transaction History
             </h3>
             <div className="space-y-3">
-              {profile.transactions.map((tx, i) => (
+              {(profile.recent_transactions ?? profile.transactions ?? []).map((tx: any, i: number) => (
                 <motion.div
                   key={i}
                   className="flex items-center gap-4 p-4 rounded-xl bg-[rgba(255,255,255,0.03)]
@@ -226,7 +232,7 @@ export default function UserProfilePage() {
                 </motion.div>
               ))}
 
-              {profile.transactions.length === 0 && (
+              {(profile.recent_transactions ?? profile.transactions ?? []).length === 0 && (
                 <div className="text-center py-12 text-text-muted">
                   No transactions found for this user.
                 </div>

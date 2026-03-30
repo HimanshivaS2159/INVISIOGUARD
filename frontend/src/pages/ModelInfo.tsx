@@ -21,16 +21,14 @@ const mockModelInfo: ModelInfo = {
   model_type: 'GradientBoostingClassifier',
   features: ['amount', 'is_night', 'new_location', 'new_device', 'hour', 'day_of_week', 'amount_velocity', 'tx_count_24h'],
   feature_importance: {
-    amount: 0.2834,
-    is_night: 0.1245,
-    new_location: 0.1567,
-    new_device: 0.1389,
-    hour: 0.0892,
-    day_of_week: 0.0456,
-    amount_velocity: 0.0923,
-    tx_count_24h: 0.0694,
+    amount: 0.2834, is_night: 0.1245, new_location: 0.1567, new_device: 0.1389,
+    hour: 0.0892, day_of_week: 0.0456, amount_velocity: 0.0923, tx_count_24h: 0.0694,
   },
-  model_version: '2.0.0',
+  model_version: '2.1.0',
+  n_estimators: 150,
+  training_samples: 5000,
+  accuracy: 0.952,
+  false_positive_rate: 0.021,
 };
 
 const comparison = [
