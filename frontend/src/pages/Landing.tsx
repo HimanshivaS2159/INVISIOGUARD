@@ -165,7 +165,7 @@ export default function Landing() {
       </div>
 
       {/* ── FINAL CTA ────────────────────────────────────────── */}
-      <div className="relative w-full bg-[rgba(8,6,24,0.9)] py-28 px-4">
+      <div className="relative w-full bg-[rgba(8,6,24,0.9)] py-28 px-6">
         <motion.div
           className="w-full max-w-3xl mx-auto text-center p-10 md:p-14 rounded-3xl
             bg-[rgba(15,12,40,0.92)] backdrop-blur-xl
