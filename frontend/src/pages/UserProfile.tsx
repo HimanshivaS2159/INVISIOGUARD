@@ -45,7 +45,8 @@ const mockProfile: UserProfileType = {
 export default function UserProfilePage() {
   const { id } = useParams<{ id: string }>();
   const [profile, setProfile] = useState<UserProfileType>(mockProfile);
-  const [loading, setLoading] = useState(true);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_loading, setLoading] = useState(true);
   const [searchId, setSearchId] = useState(id || 'demo_user_1');
 
   const fetchProfile = async (userId: string) => {
@@ -132,7 +133,7 @@ export default function UserProfilePage() {
               <div className="w-20 h-20 rounded-full bg-accent/15 flex items-center justify-center mb-4">
                 <User size={36} className="text-accent" />
               </div>
-              <h2 className="text-xl font-bold mb-1">{loading ? '...' : profile.user_id}</h2>
+              <h2 className="text-xl font-bold mb-1">{_loading ? '...' : profile.user_id}</h2>
               <span className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold border mb-4 ${getRiskLevelBadge(profile.risk_level)}`}>
                 {profile.risk_level} RISK
               </span>

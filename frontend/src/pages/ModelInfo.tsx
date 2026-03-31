@@ -81,7 +81,8 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 export default function ModelInfoPage() {
   const [info, setInfo] = useState<ModelInfo>(mockModelInfo);
-  const [loading, setLoading] = useState(true);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchInfo = async () => {
@@ -153,7 +154,7 @@ export default function ModelInfoPage() {
                 </div>
                 <div>
                   <p className="text-xs text-text-muted">{card.label}</p>
-                  <p className="font-semibold text-sm">{loading ? '—' : card.value}</p>
+                  <p className="font-semibold text-sm">{_loading ? '—' : card.value}</p>
                 </div>
               </div>
             </GlassEffect>
