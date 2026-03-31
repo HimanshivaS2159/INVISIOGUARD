@@ -125,71 +125,120 @@ export default function UserProfilePage() {
 
       {/* Content */}
       <motion.div
-        style={{ maxWidth: '80rem', margin: '0 auto', padding: '2.5rem 1.5rem 0', position: 'relative', zIndex: 1 }}
+        style={{ maxWidth: '85rem', margin: '0 auto', padding: '3rem 2rem 0', position: 'relative', zIndex: 1 }}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-      <motion.div className="mb-8" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.625rem', padding: '0.375rem 1rem', borderRadius: '9999px', marginBottom: '1rem', background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.3)', backdropFilter: 'blur(10px)' }}>
-          <User size={14} className="text-[#3B82F6]" />
-          <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#93C5FD', textTransform: 'uppercase', letterSpacing: '0.12em' }}>Behavior Profile</span>
+      {/* Page Header */}
+      <motion.div 
+        style={{ marginBottom: '3rem' }}
+        initial={{ opacity: 0, y: 20 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 0.6 }}
+      >
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.625rem', padding: '0.5rem 1.25rem', borderRadius: '9999px', marginBottom: '1.25rem', background: 'rgba(59,130,246,0.15)', border: '1px solid rgba(59,130,246,0.35)', backdropFilter: 'blur(10px)' }}>
+          <User size={15} style={{ color: '#3B82F6' }} />
+          <span style={{ fontSize: '0.8125rem', fontWeight: 700, color: '#93C5FD', textTransform: 'uppercase', letterSpacing: '0.12em' }}>Behavior Profile</span>
         </div>
-        <h1 style={{ fontSize: 'clamp(2rem,5vw,3rem)', fontWeight: 900, lineHeight: 1.2, fontFamily: 'Space Grotesk, sans-serif', marginBottom: '0.75rem' }}>
+        <h1 style={{ fontSize: 'clamp(2.25rem,5vw,3.5rem)', fontWeight: 900, lineHeight: 1.1, fontFamily: 'Space Grotesk, sans-serif', marginBottom: '1rem' }}>
           <span style={{ color: '#fff' }}>User </span>
-          <span className="bg-gradient-to-r from-[#3B82F6] to-[#F97316] bg-clip-text text-transparent">
+          <span style={{ background: 'linear-gradient(135deg,#3B82F6,#F97316)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
             Profile
           </span>
         </h1>
-        <p style={{ color: 'rgba(200,190,220,0.85)', fontSize: '1.0625rem' }}>Behavioral analysis and transaction history.</p>
+        <p style={{ color: 'rgba(200,190,220,0.9)', fontSize: '1.125rem', maxWidth: '42rem' }}>
+          Comprehensive behavioral analysis and transaction history tracking.
+        </p>
       </motion.div>
 
       {/* Search bar */}
-      <div className="flex gap-3 mb-8">
+      <motion.div 
+        style={{ display: 'flex', gap: '1rem', marginBottom: '3rem', maxWidth: '42rem' }}
+        initial={{ opacity: 0, y: 10 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
         <input
           type="text"
           value={searchId}
           onChange={(e) => setSearchId(e.target.value)}
-          placeholder="Enter User ID..."
-          className="glass-input flex-1 max-w-md"
+          placeholder="Enter User ID (e.g., demo_user_1)..."
+          className="glass-input"
+          style={{ flex: 1 }}
           id="user-search"
         />
         <motion.button
           onClick={() => fetchProfile(searchId)}
-          className="px-6 py-3 rounded-xl bg-gradient-to-r from-accent to-[#F97316] text-white font-semibold
-            shadow-[0_4px_16px_rgba(59,130,246,0.3)]"
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
+          style={{
+            padding: '0.875rem 2rem',
+            borderRadius: '0.875rem',
+            background: 'linear-gradient(135deg,#3B82F6,#F97316)',
+            color: '#fff',
+            fontWeight: 700,
+            fontSize: '0.9375rem',
+            border: 'none',
+            cursor: 'pointer',
+            boxShadow: '0 4px 20px rgba(59,130,246,0.35)',
+            whiteSpace: 'nowrap'
+          }}
+          whileHover={{ scale: 1.03, boxShadow: '0 6px 28px rgba(59,130,246,0.45)' }}
+          whileTap={{ scale: 0.98 }}
         >
-          Search
+          Search User
         </motion.button>
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Main Content Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem', alignItems: 'start' }}>
         {/* ─── User Header Card ────────────────────────────── */}
-        <div className="lg:col-span-1 space-y-6">
+        <motion.div 
+          style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}
+          initial={{ opacity: 0, x: -20 }} 
+          animate={{ opacity: 1, x: 0 }} 
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
           <GlassEffect hover={false}>
-            <div className="flex flex-col items-center text-center">
-              <div className="w-20 h-20 rounded-full bg-accent/15 flex items-center justify-center mb-4">
-                <User size={36} className="text-accent" />
-              </div>
-              <h2 className="text-xl font-bold mb-1">{_loading ? '...' : profile.user_id}</h2>
-              <span className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold border mb-4 ${getRiskLevelBadge(profile.risk_level)}`}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '1rem' }}>
+              <motion.div 
+                style={{ 
+                  width: '5.5rem', 
+                  height: '5.5rem', 
+                  borderRadius: '50%', 
+                  background: 'linear-gradient(135deg, rgba(59,130,246,0.2), rgba(249,115,22,0.15))',
+                  border: '2px solid rgba(59,130,246,0.3)',
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  marginBottom: '1.5rem',
+                  boxShadow: '0 8px 24px rgba(59,130,246,0.2)'
+                }}
+                whileHover={{ scale: 1.05, boxShadow: '0 12px 32px rgba(59,130,246,0.3)' }}
+              >
+                <User size={42} style={{ color: '#3B82F6' }} />
+              </motion.div>
+              
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.75rem', fontFamily: 'Space Grotesk, sans-serif', color: '#fff' }}>
+                {_loading ? '...' : profile.user_id}
+              </h2>
+              
+              <span className={`inline-flex px-4 py-1.5 rounded-full text-sm font-bold border mb-6 ${getRiskLevelBadge(profile.risk_level)}`}>
                 {profile.risk_level} RISK
               </span>
 
-              <div className="w-full space-y-3 mt-2">
-                <div className="flex justify-between py-2 border-b border-[rgba(255,255,255,0.06)]">
-                  <span className="text-sm text-text-muted flex items-center gap-2">
-                    <CreditCard size={14} /> Transactions
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '0.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', borderRadius: '0.75rem', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', fontSize: '0.9375rem', color: '#94A3B8', fontWeight: 500 }}>
+                    <CreditCard size={16} /> Transactions
                   </span>
-                  <span className="text-sm font-semibold">{profile.total_transactions}</span>
+                  <span style={{ fontSize: '1.125rem', fontWeight: 800, color: '#fff' }}>{profile.total_transactions}</span>
                 </div>
-                <div className="flex justify-between py-2 border-b border-[rgba(255,255,255,0.06)]">
-                  <span className="text-sm text-text-muted flex items-center gap-2">
-                    <Activity size={14} /> Avg Risk
+                
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', borderRadius: '0.75rem', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', fontSize: '0.9375rem', color: '#94A3B8', fontWeight: 500 }}>
+                    <Activity size={16} /> Avg Risk Score
                   </span>
-                  <span className={`text-sm font-semibold ${getRiskColor(profile.avg_risk_score)}`}>
+                  <span className={`text-lg font-bold ${getRiskColor(profile.avg_risk_score)}`}>
                     {profile.avg_risk_score.toFixed(1)}
                   </span>
                 </div>
@@ -199,88 +248,137 @@ export default function UserProfilePage() {
 
           {/* Behavioral Patterns */}
           <GlassEffect hover={false}>
-            <h3 className="text-sm font-semibold text-text-muted uppercase tracking-wider mb-4 flex items-center gap-2">
-              <Tag size={14} />
-              Behavioral Patterns
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {(profile.behavioral_patterns ?? []).map((pattern, i) => (
-                <motion.span
-                  key={i}
-                  className="px-3 py-1.5 text-xs rounded-full
-                    bg-[rgba(59,130,246,0.1)] text-accent border border-[rgba(59,130,246,0.15)]"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: i * 0.05 }}
-                >
-                  {pattern}
-                </motion.span>
-              ))}
+            <div style={{ padding: '0.5rem' }}>
+              <h3 style={{ fontSize: '0.8125rem', fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Tag size={15} />
+                Behavioral Patterns
+              </h3>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.625rem' }}>
+                {(profile.behavioral_patterns ?? []).map((pattern, i) => (
+                  <motion.span
+                    key={i}
+                    style={{
+                      padding: '0.625rem 1rem',
+                      fontSize: '0.8125rem',
+                      borderRadius: '9999px',
+                      background: 'rgba(59,130,246,0.12)',
+                      color: '#93C5FD',
+                      border: '1px solid rgba(59,130,246,0.2)',
+                      fontWeight: 600
+                    }}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.4 + i * 0.05 }}
+                    whileHover={{ scale: 1.05, background: 'rgba(59,130,246,0.18)' }}
+                  >
+                    {pattern}
+                  </motion.span>
+                ))}
+              </div>
             </div>
           </GlassEffect>
-        </div>
+        </motion.div>
 
         {/* ─── Transaction History ──────────────────────────── */}
-        <div className="lg:col-span-2">
+        <motion.div 
+          style={{ gridColumn: 'span 2 / span 2' }}
+          initial={{ opacity: 0, x: 20 }} 
+          animate={{ opacity: 1, x: 0 }} 
+          transition={{ duration: 0.6, delay: 0.4 }}
+        >
           <GlassEffect hover={false}>
-            <h3 className="text-base font-semibold mb-4 flex items-center gap-2">
-              <Calendar size={18} className="text-accent" />
-              Transaction History
-            </h3>
-            <div className="space-y-3">
-              {(profile.recent_transactions ?? profile.transactions ?? []).map((tx: any, i: number) => (
-                <motion.div
-                  key={i}
-                  className="flex items-center gap-4 p-4 rounded-xl bg-[rgba(255,255,255,0.03)]
-                    border border-[rgba(255,255,255,0.05)] hover:border-[rgba(59,130,246,0.15)]
-                    transition-colors"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.08 }}
-                >
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-                    tx.result === 'FRAUD' ? 'bg-danger/15' : 'bg-success/15'
-                  }`}>
-                    {tx.result === 'FRAUD' ? (
-                      <ShieldAlert size={18} className="text-danger" />
-                    ) : (
-                      <ShieldCheck size={18} className="text-success" />
-                    )}
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <span className="font-semibold">₹{tx.amount.toLocaleString()}</span>
-                      <span className={`text-xs px-2 py-0.5 rounded-full border font-medium ${
-                        tx.result === 'FRAUD'
-                          ? 'bg-danger/15 text-danger border-danger/25'
-                          : 'bg-success/15 text-success border-success/25'
-                      }`}>
-                        {tx.result}
-                      </span>
+            <div style={{ padding: '0.5rem' }}>
+              <h3 style={{ fontSize: '1.125rem', fontWeight: 800, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.625rem', fontFamily: 'Space Grotesk, sans-serif', color: '#fff' }}>
+                <Calendar size={20} style={{ color: '#3B82F6' }} />
+                Transaction History
+              </h3>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {(profile.recent_transactions ?? profile.transactions ?? []).map((tx: any, i: number) => (
+                  <motion.div
+                    key={i}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '1.25rem',
+                      padding: '1.25rem',
+                      borderRadius: '1rem',
+                      background: 'rgba(255,255,255,0.03)',
+                      border: '1px solid rgba(255,255,255,0.06)',
+                      transition: 'all 0.3s ease'
+                    }}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.5 + i * 0.08 }}
+                    whileHover={{ 
+                      background: 'rgba(255,255,255,0.05)', 
+                      borderColor: 'rgba(59,130,246,0.2)',
+                      x: 4
+                    }}
+                  >
+                    <div style={{
+                      width: '3rem',
+                      height: '3rem',
+                      borderRadius: '0.875rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      background: tx.result === 'FRAUD' ? 'rgba(239,68,68,0.15)' : 'rgba(16,185,129,0.15)',
+                      border: `1px solid ${tx.result === 'FRAUD' ? 'rgba(239,68,68,0.3)' : 'rgba(16,185,129,0.3)'}`
+                    }}>
+                      {tx.result === 'FRAUD' ? (
+                        <ShieldAlert size={20} style={{ color: '#EF4444' }} />
+                      ) : (
+                        <ShieldCheck size={20} style={{ color: '#10B981' }} />
+                      )}
                     </div>
-                    <p className="text-xs text-text-muted truncate">
-                      {tx.reasons.join(' · ')}
-                    </p>
-                  </div>
 
-                  <div className="text-right shrink-0">
-                    <div className={`text-lg font-bold ${getRiskColor(tx.risk_score)}`}>
-                      {tx.risk_score}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.375rem', flexWrap: 'wrap' }}>
+                        <span style={{ fontSize: '1.125rem', fontWeight: 800, color: '#fff' }}>
+                          ₹{tx.amount.toLocaleString()}
+                        </span>
+                        <span style={{
+                          fontSize: '0.75rem',
+                          padding: '0.25rem 0.75rem',
+                          borderRadius: '9999px',
+                          border: '1px solid',
+                          fontWeight: 700,
+                          background: tx.result === 'FRAUD' ? 'rgba(239,68,68,0.15)' : 'rgba(16,185,129,0.15)',
+                          color: tx.result === 'FRAUD' ? '#EF4444' : '#10B981',
+                          borderColor: tx.result === 'FRAUD' ? 'rgba(239,68,68,0.3)' : 'rgba(16,185,129,0.3)'
+                        }}>
+                          {tx.result}
+                        </span>
+                      </div>
+                      <p style={{ fontSize: '0.8125rem', color: '#94A3B8', lineHeight: 1.5 }}>
+                        {tx.reasons.join(' · ')}
+                      </p>
                     </div>
-                    <div className="text-[10px] text-text-muted">risk</div>
-                  </div>
-                </motion.div>
-              ))}
 
-              {(profile.recent_transactions ?? profile.transactions ?? []).length === 0 && (
-                <div className="text-center py-12 text-text-muted">
-                  No transactions found for this user.
-                </div>
-              )}
+                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                      <div className={`text-2xl font-black ${getRiskColor(tx.risk_score)}`} style={{ fontFamily: 'Space Grotesk, sans-serif', lineHeight: 1 }}>
+                        {tx.risk_score}
+                      </div>
+                      <div style={{ fontSize: '0.6875rem', color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: '0.25rem', fontWeight: 600 }}>
+                        risk
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+
+                {(profile.recent_transactions ?? profile.transactions ?? []).length === 0 && (
+                  <div style={{ textAlign: 'center', padding: '4rem 2rem', color: '#94A3B8' }}>
+                    <User size={48} style={{ margin: '0 auto 1rem', opacity: 0.3 }} />
+                    <p style={{ fontSize: '1rem', fontWeight: 600 }}>No transactions found for this user.</p>
+                    <p style={{ fontSize: '0.875rem', marginTop: '0.5rem', opacity: 0.7 }}>Try searching for a different user ID.</p>
+                  </div>
+                )}
+              </div>
             </div>
           </GlassEffect>
-        </div>
+        </motion.div>
       </div>
       </motion.div>
     </div>
