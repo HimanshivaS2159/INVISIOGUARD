@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { BarChart3, TrendingUp, ShieldCheck, ShieldAlert, Activity, AlertTriangle, RefreshCw, Zap } from 'lucide-react';
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
@@ -87,7 +87,7 @@ export default function Dashboard() {
   const tierData = Object.entries(stats.risk_tier_distribution).map(([tier, count]) => ({ tier, count }));
 
   return (
-    <motion.div style={pageStyle} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+    <motion.div style={pageStyle}>
       <div style={wrapStyle}>
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
           <div>

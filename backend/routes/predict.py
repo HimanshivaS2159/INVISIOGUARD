@@ -60,6 +60,7 @@ def predict_fraud():
         new_location = int(data['new_location'])
         new_device = int(data['new_device'])
         user_id = data.get('user_id', 'anonymous')
+        merchant_category = data.get('merchant_category', 'Other')
         ip_address = data.get('ip_address', request.remote_addr)
 
         if amount <= 0:
@@ -156,6 +157,7 @@ def predict_fraud():
             'transaction_data': {
                 'amount': amount,
                 'currency': 'INR',
+                'merchant_category': merchant_category,
                 'timestamp': now.isoformat(),
                 'user_id': user_id
             },
@@ -167,11 +169,19 @@ def predict_fraud():
         }
 
         # Store for analytics
+        risk_tier = (
+            'CRITICAL' if combined_risk_score >= 80 else
+            'HIGH'     if combined_risk_score >= 60 else
+            'MEDIUM'   if combined_risk_score >= 30 else
+            'LOW'
+        )
         transaction_store.add({
             'result': final_result,
             'risk_score': round(combined_risk_score, 2),
+            'risk_tier': risk_tier,
             'amount': amount,
             'user_id': user_id,
+            'merchant_category': merchant_category,
             'reasons': all_reasons
         })
 

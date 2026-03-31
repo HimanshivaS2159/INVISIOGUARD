@@ -181,9 +181,19 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ─── Pulse Animation ────────────────────────────────────────────── */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
 @keyframes pulse-glow {
   0%, 100% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.3); }
   50% { box-shadow: 0 0 40px rgba(168, 85, 247, 0.6); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(20px, 20px); }
 }
 
 .pulse-glow {
