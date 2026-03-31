@@ -2,6 +2,7 @@
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import Features from '../components/Features';
+import { HeroFuturistic } from '../components/ui/hero-futuristic';
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -9,55 +10,36 @@ export default function Landing() {
   return (
     <div className="w-full">
 
-      {/* ── HERO — Simple CSS Fallback ─────────────────────────── */}
-      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center',
-        justifyContent: 'center', position: 'relative', overflow: 'hidden', background: 'linear-gradient(135deg, #0A0A1A 0%, #1A0A2E 100%)' }}>
-        
-        {/* Animated gradient background */}
-        <div style={{ position: 'absolute', inset: 0, opacity: 0.3 }}>
-          <div style={{ position: 'absolute', top: '20%', left: '10%', width: '500px', height: '500px',
-            background: 'radial-gradient(circle, rgba(168,85,247,0.4) 0%, transparent 70%)',
-            filter: 'blur(80px)', animation: 'float 8s ease-in-out infinite' }} />
-          <div style={{ position: 'absolute', bottom: '20%', right: '10%', width: '400px', height: '400px',
-            background: 'radial-gradient(circle, rgba(99,102,241,0.4) 0%, transparent 70%)',
-            filter: 'blur(80px)', animation: 'float 10s ease-in-out infinite reverse' }} />
-        </div>
-
-        <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', padding: '0 2rem' }}>
-          <h1 style={{ fontSize: 'clamp(2.5rem,10vw,7rem)', fontWeight: 900, letterSpacing: '0.15em',
-            background: 'linear-gradient(135deg,#fff 0%,#C084FC 50%,#A855F7 100%)',
-            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
-            marginBottom: '1rem', filter: 'drop-shadow(0 0 20px rgba(168,85,247,0.6))' }}>
-            INVISIGUARD
-          </h1>
-          <p style={{ color: 'rgba(240,238,255,0.75)', fontSize: 'clamp(0.875rem,2vw,1.25rem)', marginBottom: '2rem' }}>
-            Behavioral fraud detection powered by AI.
-          </p>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '2.5rem' }}>
-            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10B981', animation: 'pulse 2s infinite' }} />
-            <span style={{ fontSize: '0.75rem', color: '#10B981', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-              System Active
-            </span>
-          </div>
-          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-            <motion.button onClick={() => navigate('/predict')}
-              style={{ background: 'linear-gradient(135deg,#A855F7,#6366F1)', color: '#fff', fontWeight: 700,
-                fontSize: '0.9375rem', padding: '0.875rem 2rem', borderRadius: '9999px', border: 'none',
-                cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem',
-                boxShadow: '0 8px 32px rgba(168,85,247,0.45)' }}
-              whileHover={{ scale: 1.06, boxShadow: '0 12px 48px rgba(168,85,247,0.65)' }}
-              whileTap={{ scale: 0.97 }}>
-              Try Live Demo <ArrowRight size={18} />
-            </motion.button>
-            <motion.button onClick={() => navigate('/dashboard')}
-              style={{ background: 'rgba(255,255,255,0.08)', color: '#fff', fontWeight: 700,
-                fontSize: '0.9375rem', padding: '0.875rem 2rem', borderRadius: '9999px',
-                border: '1px solid rgba(255,255,255,0.18)', cursor: 'pointer', backdropFilter: 'blur(12px)' }}
-              whileHover={{ scale: 1.04, background: 'rgba(255,255,255,0.13)' }}
-              whileTap={{ scale: 0.97 }}>
-              View Dashboard
-            </motion.button>
-          </div>
+      {/* ── HERO — WebGPU Futuristic ─────────────────────────── */}
+      <div style={{ width: '100%', position: 'relative' }}>
+        <HeroFuturistic />
+        {/* CTA buttons overlaid at bottom of hero */}
+        <div style={{
+          position: 'absolute', bottom: '3rem', left: '50%', transform: 'translateX(-50%)',
+          display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center', zIndex: 20,
+        }}>
+          <motion.button
+            onClick={() => navigate('/predict')}
+            style={{ background: 'linear-gradient(135deg,#A855F7,#6366F1)', color: '#fff', fontWeight: 700,
+              fontSize: '0.9375rem', padding: '0.875rem 2rem', borderRadius: '9999px', border: 'none',
+              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem',
+              boxShadow: '0 8px 32px rgba(168,85,247,0.45)' }}
+            whileHover={{ scale: 1.06, boxShadow: '0 12px 48px rgba(168,85,247,0.65)' }}
+            whileTap={{ scale: 0.97 }}
+          >
+            Try Live Demo <ArrowRight size={18} />
+          </motion.button>
+          <motion.button
+            onClick={() => navigate('/dashboard')}
+            style={{ background: 'rgba(255,255,255,0.08)', color: '#fff', fontWeight: 700,
+              fontSize: '0.9375rem', padding: '0.875rem 2rem', borderRadius: '9999px',
+              border: '1px solid rgba(255,255,255,0.18)', cursor: 'pointer',
+              backdropFilter: 'blur(12px)' }}
+            whileHover={{ scale: 1.04, background: 'rgba(255,255,255,0.13)' }}
+            whileTap={{ scale: 0.97 }}
+          >
+            View Dashboard
+          </motion.button>
         </div>
       </div>
 

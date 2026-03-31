@@ -6,6 +6,7 @@ Enhanced with velocity checks, anomaly scoring, and richer profiling
 from typing import List, Dict, Any, Tuple
 from datetime import datetime, timedelta
 import logging
+import numpy as np
 
 logger = logging.getLogger(__name__)
 
@@ -245,7 +246,5 @@ class BehaviorAnalyzer:
         self.user_profiles.clear()
 
 
-# numpy needed for argmax
-import numpy as np
 
 behavior_analyzer = BehaviorAnalyzer()

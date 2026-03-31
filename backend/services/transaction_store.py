@@ -87,9 +87,7 @@ class TransactionStore:
                 'risk_score': r.get('risk_score', 0),
                 'result': r.get('result', 'SAFE'),
                 'timestamp': r.get('stored_at', datetime.now().isoformat()),
-                'reasons': r.get('reasons', []),
-                'merchant_category': r.get('merchant_category', 'Other'),
-                'risk_tier': r.get('risk_tier', 'LOW')
+                'reasons': r.get('reasons', [])
             })
 
         return {

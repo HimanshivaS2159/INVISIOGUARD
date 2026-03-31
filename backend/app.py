@@ -158,7 +158,7 @@ if __name__ == '__main__':
             print(f"[ngrok] Could not start tunnel: {e}")
 
     print("=" * 60)
-    print("INVISIGUARD Fraud Detection System")
+    print("🔐 INVISIGUARD Fraud Detection System")
     print("=" * 60)
     print(f"Environment : {env}")
     print(f"Local URL   : http://127.0.0.1:{port}")
