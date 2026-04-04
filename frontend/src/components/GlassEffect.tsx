@@ -1,5 +1,6 @@
-import type { ReactNode } from 'react';
+import { useId } from 'react';
 import { motion } from 'framer-motion';
+import type { ReactNode } from 'react';
 
 interface GlassEffectProps {
   children: ReactNode;
@@ -16,6 +17,15 @@ export default function GlassEffect({
   onClick,
   padding = 'p-6',
 }: GlassEffectProps) {
+  // ─── BUG FIX #3 ─────────────────────────────────────────────────────────────
+  // Every GlassEffect instance was rendering an SVG with id="glass-distortion".
+  // When multiple cards render on the same page, duplicate IDs in the DOM cause
+  // the browser to apply the FIRST matching filter to ALL elements, making all
+  // cards use one filter and breaking the intended per-card distortion effect.
+  // Fix: use React 18's useId() to generate a unique, stable ID per instance.
+  const uid = useId();
+  const filterId = `glass-distortion-${uid.replace(/:/g, '')}`;
+
   return (
     <motion.div
       className={`
@@ -32,7 +42,7 @@ export default function GlassEffect({
         hover
           ? {
               scale: 1.01,
-              borderColor: 'rgba(168, 85, 247, 0.35)',
+              borderColor: 'rgba(168,85,247,0.35)',
               boxShadow:
                 'inset 0 1px 0 rgba(255,255,255,0.08), 0 16px 60px rgba(59,130,246,0.25), 0 0 0 1px rgba(59,130,246,0.2)',
             }
@@ -41,10 +51,10 @@ export default function GlassEffect({
       transition={{ type: 'spring', stiffness: 300, damping: 25 }}
       onClick={onClick}
     >
-      {/* SVG glass distortion filter */}
+      {/* Unique SVG filter per instance — no more ID collisions */}
       <svg className="absolute w-0 h-0" aria-hidden="true">
         <defs>
-          <filter id="glass-distortion">
+          <filter id={filterId}>
             <feTurbulence
               type="fractalNoise"
               baseFrequency="0.015"
@@ -62,7 +72,7 @@ export default function GlassEffect({
         </defs>
       </svg>
 
-      {/* Top highlight edge with purple tint */}
+      {/* Top highlight edge */}
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[rgba(59,130,246,0.4)] to-transparent" />
 
       {children}

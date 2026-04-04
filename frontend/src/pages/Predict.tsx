@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, Globe, Smartphone, Monitor, Tablet, HelpCircle,
@@ -6,8 +6,10 @@ import {
   ShieldAlert, ChevronDown, Loader2,
 } from 'lucide-react';
 import Select from '../components/Select';
+import AnimatedBackground from '../components/AnimatedBackground';
 import { predictFraud, type PredictResponse } from '../api/client';
 import { toast } from '../components/Toast';
+import { getRiskColor, getRiskLabel, getRiskBadge } from '../utils/risk';
 
 const merchantOptions = [
   { value: 'Food',        label: 'Food & Dining',  description: 'Restaurants, grocery, delivery' },
@@ -31,13 +33,6 @@ const timeOptions = [
 ];
 
 type Status = 'idle' | 'loading' | 'result';
-
-const getRiskColor = (s: number) => s < 30 ? '#10B981' : s < 70 ? '#F59E0B' : '#EF4444';
-const getRiskLabel = (s: number) => s < 30 ? 'SAFE' : s < 70 ? 'SUSPICIOUS' : 'FRAUD';
-const getRiskBadge = (s: number) =>
-  s < 30 ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/25'
-  : s < 70 ? 'bg-amber-500/15 text-amber-400 border-amber-500/25'
-  : 'bg-red-500/15 text-red-400 border-red-500/25';
 
 function Toggle({ label, icon, checked, onChange }: {
   label: string; icon: React.ReactNode; checked: boolean; onChange: () => void;
@@ -107,7 +102,21 @@ export default function Predict() {
   const [result,            setResult]            = useState<PredictResponse | null>(null);
   const [showJson,          setShowJson]          = useState(false);
 
+  // ─── IMPROVEMENT: Input validation ──────────────────────────────────────────
   const handleSubmit = async () => {
+    // Validate amount
+    const amountNum = parseFloat(amount);
+    if (!amount || amountNum <= 0 || isNaN(amountNum)) {
+      toast('Please enter a valid amount', 'error');
+      return;
+    }
+    
+    // Validate user ID
+    if (!userId || userId.trim() === '') {
+      toast('Please enter a User ID', 'error');
+      return;
+    }
+
     setStatus('loading'); setResult(null);
     try {
       const res = await predictFraud({
@@ -126,6 +135,17 @@ export default function Predict() {
     }
   };
 
+  // ─── IMPROVEMENT: Keyboard shortcut (Enter to submit) ──────────────────────
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Enter' && status !== 'loading') {
+        handleSubmit();
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [status, amount, userId, isNewDevice, isForeignLocation, timeOfDay]);
+
   const flags = result ? [
     isForeignLocation                              && { icon: <Globe size={16} />,      label: 'Foreign / New Location' },
     isNewDevice                                    && { icon: <Smartphone size={16} />, label: 'Unknown Device' },
@@ -139,45 +159,8 @@ export default function Predict() {
 
   return (
     <div style={{ width: '100%', minHeight: '100vh', position: 'relative', overflow: 'hidden', paddingBottom: '7rem' }}>
-      {/* Animated background */}
-      <div style={{ position: 'absolute', inset: 0, opacity: 0.35 }}>
-        <div style={{ position: 'absolute', top: '15%', left: '5%', width: '550px', height: '550px',
-          background: 'radial-gradient(circle, rgba(59,130,246,0.6) 0%, rgba(59,130,246,0.2) 40%, transparent 70%)',
-          filter: 'blur(100px)', animation: 'float 12s ease-in-out infinite' }} />
-        <div style={{ position: 'absolute', bottom: '15%', right: '5%', width: '500px', height: '500px',
-          background: 'radial-gradient(circle, rgba(249,115,22,0.6) 0%, rgba(249,115,22,0.2) 40%, transparent 70%)',
-          filter: 'blur(100px)', animation: 'float 15s ease-in-out infinite reverse' }} />
-        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '600px', height: '600px',
-          background: 'radial-gradient(circle, rgba(96,165,250,0.4) 0%, transparent 60%)',
-          filter: 'blur(120px)', animation: 'pulse 10s ease-in-out infinite' }} />
-      </div>
-
-      {/* Floating particles */}
-      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
-        {[...Array(18)].map((_, i) => (
-          <div key={i} style={{
-            position: 'absolute',
-            width: `${Math.random() * 4 + 2}px`,
-            height: `${Math.random() * 4 + 2}px`,
-            background: 'rgba(59,130,246,0.7)',
-            borderRadius: '50%',
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-            animation: `floatParticle ${Math.random() * 10 + 10}s ease-in-out infinite`,
-            animationDelay: `${Math.random() * 5}s`,
-            boxShadow: '0 0 12px rgba(59,130,246,0.9)'
-          }} />
-        ))}
-      </div>
-
-      {/* Grid overlay */}
-      <div style={{ 
-        position: 'absolute', 
-        inset: 0, 
-        backgroundImage: 'linear-gradient(rgba(59,130,246,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.03) 1px, transparent 1px)',
-        backgroundSize: '100px 100px', 
-        opacity: 0.25 
-      }} />
+      {/* Use shared AnimatedBackground component */}
+      <AnimatedBackground particleCount={18} orbOpacity={0.35} showGrid={true} />
 
       {/* Content */}
       <div style={{ maxWidth: '85rem', margin: '0 auto', padding: '2.5rem 1.5rem 0', position: 'relative', zIndex: 1 }}>
@@ -264,6 +247,16 @@ export default function Predict() {
                       className="glass-input" placeholder="Mumbai, IN" />
                   </div>
                 </div>
+                
+                {/* ─── IMPROVEMENT: Note about context fields ──────────────────── */}
+                <p style={{ 
+                  fontSize: '0.75rem', 
+                  color: 'rgba(155,142,196,0.7)', 
+                  fontStyle: 'italic',
+                  marginTop: '-0.5rem'
+                }}>
+                  Merchant, Device, and Location are used for behavioral context display
+                </p>
 
                 {/* Device + Time */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.875rem' }}>

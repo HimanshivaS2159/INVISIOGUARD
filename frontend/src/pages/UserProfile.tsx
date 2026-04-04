@@ -11,8 +11,10 @@ import {
   ShieldAlert,
 } from 'lucide-react';
 import GlassEffect from '../components/GlassEffect';
+import AnimatedBackground from '../components/AnimatedBackground';
 import { getUserProfile, type UserProfile as UserProfileType } from '../api/client';
 import { toast } from '../components/Toast';
+import { getRiskColor } from '../utils/risk';
 
 const mockProfile: UserProfileType = {
   user_id: 'demo_user_1',
@@ -45,8 +47,7 @@ const mockProfile: UserProfileType = {
 export default function UserProfilePage() {
   const { id } = useParams<{ id: string }>();
   const [profile, setProfile] = useState<UserProfileType>(mockProfile);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   const [searchId, setSearchId] = useState(id || 'demo_user_1');
 
   const fetchProfile = async (userId: string) => {
@@ -66,12 +67,6 @@ export default function UserProfilePage() {
     fetchProfile(id || 'demo_user_1');
   }, [id]);
 
-  const getRiskColor = (score: number) => {
-    if (score < 30) return 'text-success';
-    if (score < 70) return 'text-warning';
-    return 'text-danger';
-  };
-
   const getRiskLevelBadge = (level: string) => {
     switch (level.toUpperCase()) {
       case 'LOW': return 'bg-success/15 text-success border-success/25';
@@ -83,45 +78,8 @@ export default function UserProfilePage() {
 
   return (
     <div style={{ width: '100%', minHeight: '100vh', position: 'relative', overflow: 'hidden', paddingBottom: '7rem' }}>
-      {/* Animated background - same as other pages */}
-      <div style={{ position: 'absolute', inset: 0, opacity: 0.35 }}>
-        <div style={{ position: 'absolute', top: '15%', left: '5%', width: '550px', height: '550px',
-          background: 'radial-gradient(circle, rgba(59,130,246,0.6) 0%, rgba(59,130,246,0.2) 40%, transparent 70%)',
-          filter: 'blur(100px)', animation: 'float 12s ease-in-out infinite' }} />
-        <div style={{ position: 'absolute', bottom: '15%', right: '5%', width: '500px', height: '500px',
-          background: 'radial-gradient(circle, rgba(249,115,22,0.6) 0%, rgba(249,115,22,0.2) 40%, transparent 70%)',
-          filter: 'blur(100px)', animation: 'float 15s ease-in-out infinite reverse' }} />
-        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '600px', height: '600px',
-          background: 'radial-gradient(circle, rgba(96,165,250,0.4) 0%, transparent 60%)',
-          filter: 'blur(120px)', animation: 'pulse 10s ease-in-out infinite' }} />
-      </div>
-
-      {/* Floating particles */}
-      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
-        {[...Array(18)].map((_, i) => (
-          <div key={i} style={{
-            position: 'absolute',
-            width: `${Math.random() * 4 + 2}px`,
-            height: `${Math.random() * 4 + 2}px`,
-            background: 'rgba(59,130,246,0.7)',
-            borderRadius: '50%',
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-            animation: `floatParticle ${Math.random() * 10 + 10}s ease-in-out infinite`,
-            animationDelay: `${Math.random() * 5}s`,
-            boxShadow: '0 0 12px rgba(59,130,246,0.9)'
-          }} />
-        ))}
-      </div>
-
-      {/* Grid overlay */}
-      <div style={{ 
-        position: 'absolute', 
-        inset: 0, 
-        backgroundImage: 'linear-gradient(rgba(59,130,246,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.03) 1px, transparent 1px)',
-        backgroundSize: '100px 100px', 
-        opacity: 0.25 
-      }} />
+      {/* Use shared AnimatedBackground component */}
+      <AnimatedBackground particleCount={18} orbOpacity={0.35} showGrid={true} />
 
       {/* Content */}
       <motion.div
@@ -219,7 +177,7 @@ export default function UserProfilePage() {
               </motion.div>
               
               <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.75rem', fontFamily: 'Space Grotesk, sans-serif', color: '#fff' }}>
-                {_loading ? '...' : profile.user_id}
+                {profile.user_id}
               </h2>
               
               <span className={`inline-flex px-4 py-1.5 rounded-full text-sm font-bold border mb-6 ${getRiskLevelBadge(profile.risk_level)}`}>
@@ -238,7 +196,7 @@ export default function UserProfilePage() {
                   <span style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', fontSize: '0.9375rem', color: '#94A3B8', fontWeight: 500 }}>
                     <Activity size={16} /> Avg Risk Score
                   </span>
-                  <span className={`text-lg font-bold ${getRiskColor(profile.avg_risk_score)}`}>
+                  <span style={{ fontSize: '1.125rem', fontWeight: 800, color: getRiskColor(profile.avg_risk_score) }}>
                     {profile.avg_risk_score.toFixed(1)}
                   </span>
                 </div>
@@ -358,7 +316,7 @@ export default function UserProfilePage() {
                     </div>
 
                     <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                      <div className={`text-2xl font-black ${getRiskColor(tx.risk_score)}`} style={{ fontFamily: 'Space Grotesk, sans-serif', lineHeight: 1 }}>
+                      <div style={{ fontSize: '2.25rem', fontWeight: 900, color: getRiskColor(tx.risk_score), fontFamily: 'Space Grotesk, sans-serif', lineHeight: 1 }}>
                         {tx.risk_score}
                       </div>
                       <div style={{ fontSize: '0.6875rem', color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: '0.25rem', fontWeight: 600 }}>

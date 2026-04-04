@@ -1,5 +1,7 @@
+import { useMemo } from 'react';
 import { motion, type Variants } from 'framer-motion';
 import { Zap, Fingerprint, Activity, Globe, ShieldCheck, Code, Cpu, Lock, TrendingUp, Database, Layers } from 'lucide-react';
+import AnimatedBackground from './AnimatedBackground';
 
 const cards = [
   {
@@ -75,12 +77,27 @@ const cardVariants: Variants = {
     transition: {
       duration: 0.6,
       delay: i * 0.1,
-      ease: [0.22, 1, 0.36, 1],
+      ease: [0.22, 1, 0.36, 1] as any,
     },
   }),
 };
 
 export default function Features() {
+  // ─── BUG FIX #5 ─────────────────────────────────────────────────────────────
+  // Pre-compute particle data once using useMemo to prevent flicker
+  const particles = useMemo(
+    () =>
+      Array.from({ length: 15 }, () => ({
+        width: Math.random() * 4 + 2,
+        height: Math.random() * 4 + 2,
+        left: Math.random() * 100,
+        top: Math.random() * 100,
+        duration: Math.random() * 10 + 10,
+        delay: Math.random() * 5,
+      })),
+    []
+  );
+
   return (
     <section style={{ width: '100%', position: 'relative', overflow: 'hidden' }} className="py-32">
       {/* Animated gradient wave background - same as hero */}
@@ -104,19 +121,19 @@ export default function Features() {
           filter: 'blur(120px)', animation: 'pulse 10s ease-in-out infinite' }} />
       </div>
 
-      {/* Floating particles */}
+      {/* Floating particles with stable values */}
       <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
-        {[...Array(15)].map((_, i) => (
+        {particles.map((p, i) => (
           <div key={i} style={{
             position: 'absolute',
-            width: `${Math.random() * 4 + 2}px`,
-            height: `${Math.random() * 4 + 2}px`,
+            width: `${p.width}px`,
+            height: `${p.height}px`,
             background: 'rgba(59,130,246,0.6)',
             borderRadius: '50%',
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-            animation: `floatParticle ${Math.random() * 10 + 10}s ease-in-out infinite`,
-            animationDelay: `${Math.random() * 5}s`,
+            left: `${p.left}%`,
+            top: `${p.top}%`,
+            animation: `floatParticle ${p.duration}s ease-in-out infinite`,
+            animationDelay: `${p.delay}s`,
             boxShadow: '0 0 10px rgba(59,130,246,0.8)'
           }} />
         ))}
@@ -263,14 +280,19 @@ export default function Features() {
                     ))}
                   </div>
 
-                  {/* Metrics */}
+                  {/* ─── ALIGNMENT FIX: Metrics box ──────────────────────────── */}
+                  {/* Changed from grid with alternating text-align to flex with center divider */}
                   <div style={{
-                    display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem',
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                     padding: '1rem', borderRadius: '0.75rem',
                     background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.05)'
                   }}>
-                    {Object.entries(card.metrics).map(([key, value], idx) => (
-                      <div key={idx} style={{ textAlign: idx === 0 ? 'left' : 'right' }}>
+                    {Object.entries(card.metrics).map(([key, value], idx, arr) => (
+                      <div key={idx} style={{ 
+                        textAlign: 'center', 
+                        flex: 1,
+                        borderRight: idx < arr.length - 1 ? '1px solid rgba(255,255,255,0.08)' : 'none'
+                      }}>
                         <div style={{
                           fontSize: '1.125rem', fontWeight: 900, color: card.accent,
                           fontFamily: 'Space Grotesk, sans-serif', marginBottom: '0.125rem'
@@ -299,7 +321,8 @@ export default function Features() {
           ))}
         </div>
 
-        {/* Bottom stats bar */}
+        {/* ─── ALIGNMENT FIX: Bottom stats bar ──────────────────────────── */}
+        {/* Changed from auto-fit to fixed 4 columns with vertical dividers */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -313,8 +336,10 @@ export default function Features() {
           }}
         >
           <div style={{
-            display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '2.5rem', textAlign: 'center'
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(4, 1fr)',
+            gap: 0,
+            textAlign: 'center'
           }}>
             {[
               { icon: <Database size={28} />, value: '150+', label: 'Behavioral Features', color: '#3B82F6' },
@@ -328,6 +353,10 @@ export default function Features() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.5 + i * 0.1 }}
+                style={{
+                  padding: '0 2rem',
+                  borderRight: i < 3 ? '1px solid rgba(255,255,255,0.06)' : 'none'
+                }}
               >
                 <div style={{
                   width: '4rem', height: '4rem', margin: '0 auto 1rem',

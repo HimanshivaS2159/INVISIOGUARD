@@ -92,10 +92,21 @@ function buildGraphData(transactions: NetworkGraphProps['transactions'] = []) {
 
 export default function NetworkGraph({ transactions = [], width = 600, height = 400 }: NetworkGraphProps) {
   const svgRef = useRef<SVGSVGElement>(null);
+  // ─── BUG FIX #4 ─────────────────────────────────────────────────────────────
+  // The D3 tooltip div was stored in a local const variable. When the useEffect
+  // re-runs, the cleanup function's closure has lost the reference, so old
+  // tooltip divs are never removed from <body> — memory leak.
+  // Fix: store the tooltip in a useRef so cleanup can access it.
+  const tooltipRef = useRef<any>(null);
   const { nodes, links } = useMemo(() => buildGraphData(transactions), [transactions]);
 
   useEffect(() => {
     if (!svgRef.current) return;
+    
+    // Remove any existing tooltip from previous render
+    tooltipRef.current?.remove();
+    tooltipRef.current = null;
+    
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
 
@@ -171,6 +182,9 @@ export default function NetworkGraph({ transactions = [], width = 600, height = 
       .style('border-radius', '8px').style('padding', '8px 12px').style('font-size', '12px')
       .style('color', '#F0EEFF').style('z-index', '9999').style('opacity', '0').style('transition', 'opacity 0.2s');
 
+    // Store tooltip in ref for cleanup
+    tooltipRef.current = tooltip;
+
     node.on('mouseover', (_event, d: any) => {
       tooltip.style('opacity', '1')
         .html(`<strong>${d.id}</strong><br/>Type: ${d.type}<br/>Risk: ${d.risk}`);
@@ -188,29 +202,48 @@ export default function NetworkGraph({ transactions = [], width = 600, height = 
 
     return () => {
       sim.stop();
-      tooltip.remove();
+      tooltipRef.current?.remove();
+      tooltipRef.current = null;
     };
   }, [nodes, links, width, height]);
 
   return (
     <div style={{ width: '100%', position: 'relative' }}>
       <svg ref={svgRef} style={{ width: '100%', height: `${height}px`, overflow: 'visible' }} />
-      {/* Legend */}
-      <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginTop: '0.75rem' }}>
-        {[
-          { color: '#3B82F6', label: 'User (safe)' },
-          { color: '#EF4444', label: 'User (fraud)' },
-          { color: '#F97316', label: 'Merchant' },
-          { color: '#10B981', label: 'Device' },
-        ].map(l => (
-          <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
-            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: l.color }} />
-            <span style={{ fontSize: '0.7rem', color: '#94A3B8' }}>{l.label}</span>
+      
+      {/* ─── ALIGNMENT FIX: Legend ──────────────────────────────────────────── */}
+      {/* Rebuilt with flex layout, separator border, and real SVG dashed line */}
+      <div style={{ 
+        borderTop: '1px solid rgba(255,255,255,0.06)', 
+        paddingTop: '0.75rem', 
+        marginTop: '0.75rem' 
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap' }}>
+          {[
+            { color: '#3B82F6', label: 'User (safe)' },
+            { color: '#EF4444', label: 'User (fraud)' },
+            { color: '#F97316', label: 'Merchant' },
+            { color: '#10B981', label: 'Device' },
+          ].map(l => (
+            <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: l.color }} />
+              <span style={{ fontSize: '0.7rem', color: '#94A3B8' }}>{l.label}</span>
+            </div>
+          ))}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+            <svg width="18" height="4">
+              <line 
+                x1="0" 
+                y1="2" 
+                x2="18" 
+                y2="2" 
+                stroke="rgba(239,68,68,0.7)" 
+                strokeWidth="2" 
+                strokeDasharray="4,3" 
+              />
+            </svg>
+            <span style={{ fontSize: '0.7rem', color: '#94A3B8' }}>Fraud link</span>
           </div>
-        ))}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
-          <div style={{ width: '16px', height: '2px', background: 'rgba(239,68,68,0.6)', borderTop: '2px dashed rgba(239,68,68,0.6)' }} />
-          <span style={{ fontSize: '0.7rem', color: '#94A3B8' }}>Fraud link</span>
         </div>
       </div>
     </div>
